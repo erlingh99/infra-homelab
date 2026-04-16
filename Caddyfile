@@ -1,0 +1,20 @@
+# homelab/caddy/Caddyfile
+
+{
+	acme_ca https://step-ca:9000/acme/acme/directory
+	acme_ca_root /etc/caddy/root_ca.crt
+	cert_lifetime 24h
+}
+
+# Route pihole to host networking
+pihole.lan {
+#	reverse_proxy 127.0.0.1:8080
+ 	respond "ok"
+}
+
+leafy.lan {
+	reverse_proxy leafy_backend:80
+}
+
+# Import all app Caddyfiles
+#import /srv/apps/*/Caddyfile
