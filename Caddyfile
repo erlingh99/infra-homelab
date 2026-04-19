@@ -7,14 +7,14 @@
 }
 
 # Route pihole to host networking
-pihole.lan {
-#	reverse_proxy 127.0.0.1:8080
- 	respond "ok"
+pi.hole pihole.lan {
+	reverse_proxy 192.168.0.2:8080
 }
 
 leafy.lan {
 	reverse_proxy leafy_backend:80
 }
 
-# Import all app Caddyfiles
-#import /srv/apps/*/Caddyfile
+alarmy.lan {
+	reverse_proxy alarmy_backend:80
+}
