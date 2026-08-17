@@ -1,9 +1,7 @@
 # homelab/caddy/Caddyfile
 
 {
-	acme_ca https://step-ca:9000/acme/acme/directory
-	acme_ca_root /etc/caddy/root_ca.crt
-	cert_lifetime 24h
+	local_certs
 }
 
 # Route pihole to host networking
@@ -17,4 +15,8 @@ leafy.lan {
 
 alarmy.lan {
 	reverse_proxy alarmy_backend:80
+}
+
+files.lan {
+	reverse_proxy copyparty:3923
 }
