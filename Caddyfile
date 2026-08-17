@@ -1,4 +1,4 @@
-# homelab/caddy/Caddyfile
+# homelab/Caddyfile
 
 {
 	local_certs
@@ -16,7 +16,6 @@ leafy.lan {
 alarmy.lan {
 	reverse_proxy alarmy_backend:80
 }
-
 
 trainy.lan {
 	reverse_proxy trainy_backend:80
