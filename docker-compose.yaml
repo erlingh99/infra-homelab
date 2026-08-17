@@ -19,26 +19,6 @@ services:
       - SYS_NICE
     restart: unless-stopped
 
-  # -- Certificate Authority --
-  step-ca:
-    image: smallstep/step-ca:latest
-    container_name: step-ca
-    restart: unless-stopped
-    dns:
-      - ${HOST_IP}
-    extra_hosts:
-      - "pihole.lan:host-gateway"
-    networks:
-      - proxy
-    volumes:
-      - step-ca-data:/home/step
-      - ./password.txt:/home/step/password.txt:ro
-    environment:
-      - DOCKER_STEPCA_INIT_NAME=Homelab CA
-      - DOCKER_STEPCA_INIT_DNS_NAMES=step-ca,step-ca.lan,${HOST_IP}
-      - DOCKER_STEPCA_INIT_ACME=true
-      - DOCKER_STEPCA_INIT_PASSWORD_FILE=/home/step/password.txt
-
   # -- Reverse Proxy --
   caddy:
     image: caddy:latest
@@ -53,7 +33,6 @@ services:
       - proxy
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./root_ca.crt:/etc/caddy/root_ca.crt:ro
       - caddy-data:/data
       - caddy-config:/config
 
@@ -77,11 +56,38 @@ services:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
 
+  # -- File sharing --
+  copyparty:
+    image: copyparty/ac:latest
+    container_name: copyparty
+    restart: unless-stopped
+    stop_grace_period: 15s
+    dns:
+      - ${HOST_IP}
+    # run as the host user that owns COPYPARTY_ROOT
+    user: "${COPYPARTY_UID:-1000}:${COPYPARTY_GID:-1000}"
+    ports:
+      - "3923:3923"
+    networks:
+      - proxy
+    volumes:
+      - ${COPYPARTY_ROOT}:/w
+      - copyparty-cfg:/cfg
+      - ./copyparty.conf:/cfg/copyparty.conf:ro
+    environment:
+      - TZ=Europe/Oslo
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:3923/?reset"]
+      interval: 1m
+      timeout: 5s
+      retries: 3
+
 volumes:
-  step-ca-data:
   caddy-data:
   caddy-config:
   tailscale-state:
+  copyparty-cfg:
 
 networks:
   proxy:

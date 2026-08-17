@@ -1,5 +1,4 @@
 .env
-password.txt
 root_ca.crt
 etc-dnsmasq.d/
 etc-pihole/
