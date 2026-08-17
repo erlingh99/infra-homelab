@@ -17,6 +17,11 @@ alarmy.lan {
 	reverse_proxy alarmy_backend:80
 }
 
+
+trainy.lan {
+	reverse_proxy trainy_backend:80
+}
+
 files.lan {
 	reverse_proxy copyparty:3923
 }
